@@ -1,0 +1,19 @@
+- Getting Started
+  - [Overview](#overview)
+  - [Installation](#installation)
+  - [Basic Usage](#basic-usage)
+- Usage
+  - [Writing Integrations](#integrations)
+  - [Component Bridge](#component-bridge)
+  - [Targeting and the DOM](#targeting)
+  - [Load Order](#load-order)
+  - [Select2 Walkthrough](#select2)
+  - [Diagnostics](#diagnostics)
+- API Reference
+  - [API Reference](#api-reference)
+  - [Compatibility](#compatibility)
+- Examples
+  - [Use Cases](#examples)
+  - [Troubleshooting](#troubleshooting)
+- Community
+  - [Contributors](#contributors)
