@@ -2,7 +2,7 @@
 
 All notable changes to this project are documented here.
 
-## 2.0.0 - Unreleased
+## 2.0.0 - 2026-10-22
 
 The first release of the 2.x line, for Livewire 2. The integration API, the component bridge, the attributes, and the error codes are the same as in 1.x.
 
