@@ -127,7 +127,7 @@ export function createRuntime({ window: win, livewire }) {
 
         if (livewire.present(win)) {
             unsupported = true
-            report('livewire-unsupported', 'The Livewire runtime on this page is not supported by this release of Pharaonic Livewire Assistant; it supports Livewire 2.')
+            report('livewire-unsupported', 'The Livewire runtime on this page is not supported by this release of Pharaonic Livewire Assistant; it supports Livewire 3.')
 
             return
         }

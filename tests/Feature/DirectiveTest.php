@@ -21,7 +21,7 @@ function renderBlade(string $template, array $data = []): string
 it('renders the runtime script tag', function () {
     $html = renderBlade('@livewireAssistantScripts');
 
-    expect($html)->toBe('<script src="http://localhost/pharaonic/livewire-assistant/assistant.js?id='.Script::version().'" data-turbo-eval="false" data-turbolinks-eval="false"></script>');
+    expect($html)->toBe('<script src="http://localhost/pharaonic/livewire-assistant/assistant.js?id='.Script::version().'" data-navigate-once="true"></script>');
 });
 
 it('renders once across the page and its partials', function () {
