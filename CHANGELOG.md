@@ -2,7 +2,7 @@
 
 All notable changes to this project are documented here.
 
-## 3.0.0 - Unreleased
+## 3.0.0 - 2026-10-22
 
 The first release of the 3.x line, for Livewire 3. The integration API, the component bridge, the attributes, and the error codes are the same as in 2.x.
 
