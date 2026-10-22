@@ -16,7 +16,7 @@ items:
     text: "`get`, `set`, `call`, and `watch`, with promises that settle with the real request."
   - icon: automation
     title: Managed lifecycle
-    text: Mount once, update on change, remount on new bindings, clean up on removal and Turbolinks visits.
+    text: Mount once, update on change, remount on new bindings, clean up on removal and Turbolinks or Turbo visits.
   - icon: alert-circle
     title: Observable failures
     text: "Stable error codes on a `pharaonic:assistant:error` event; one broken widget never stops the others."

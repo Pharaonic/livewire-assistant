@@ -61,7 +61,7 @@ Instances are cleaned up when:
 - their binding changes;
 - you call `destroy()` on the element or an ancestor;
 - their integration is unregistered;
-- Turbolinks is about to cache the page.
+- Turbolinks or Turbo is about to cache the page.
 
 An element that only moves inside its component keeps its instance.
 

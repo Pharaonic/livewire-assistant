@@ -6,15 +6,19 @@ The `data-pharaonic` name was never registered. Check the spelling, and that you
 
 ### `livewire-unsupported` is reported
 
-The page runs a Livewire major this line does not support. The 1.x line supports Livewire 1 only. Note that the `livewire/livewire` 1.3.7 release contains Livewire 2 code; this package excludes it.
+The page runs a Livewire major this line does not support. The 2.x line supports Livewire 2 only; use the 1.x line for Livewire 1.
 
 ### The runtime script returns 404
 
 The web server answers `.js` URLs from `public/` without asking Laravel. Let `/pharaonic/livewire-assistant/assistant.js` fall through to `index.php`, as Livewire's own `/livewire/livewire.js` must.
 
-### Composer refuses to install Livewire 1 or Laravel
+### Composer refuses to install Laravel
 
-Composer blocks releases with security advisories when it installs or updates them, and no Livewire 1, Laravel 7, or Laravel 8 release is free of them. See the warning in [Installation](#installation) for the packages to allow.
+Composer blocks releases with security advisories when it installs or updates them, and no Laravel 7, 8, 9, or 10 release is free of them. See the warning in [Installation](#installation) for the packages to allow on each Laravel version.
+
+### Composer refuses Livewire below 2.12.7
+
+The 2.x line requires Livewire 2.12.7 or later, the first Livewire 2 release with the fix for CVE-2024-47823. Update Livewire within its major: `composer update livewire/livewire`.
 
 ### Typing in an input jumps back to older text
 
@@ -34,7 +38,7 @@ The widget markup is not inside `wire:ignore`, so Livewire's morphing removes it
 
 ### Toggling one widget removes a different one
 
-Livewire 1 compared the wrong ignored blocks. Give every ignored block that can appear or disappear a unique `wire:key`, and do not use an inner element's `id` as the key. See [Targeting and the DOM](#targeting).
+Livewire compared the wrong ignored blocks. Give every ignored block that can appear or disappear a unique `wire:key`, and do not use an inner element's `id` as the key. See [Targeting and the DOM](#targeting).
 
 ### The widget does not follow server changes
 
@@ -44,21 +48,22 @@ Elements inside `wire:ignore` never receive new server HTML. Subscribe with `com
 
 The integration applies server values in a way that fires its own change handler. Compare values before applying them, and refresh the widget without triggering your handler, as in the [Select2 walkthrough](#select2).
 
-### `set(..., { live: false })` rejects with `unsupported-operation`
+### A deferred `set()` never resolves
 
-Livewire 1 has no deferred updates. Omit the option; every write is sent immediately.
+`set(..., { live: false })` resolves with the component's next request. If nothing sends one, call an action, for example `component.call('$refresh')`, or write with `{ live: true }`.
 
-### `call()` resolves to `undefined`
+### Navigating with Turbolinks or Turbo leaves widgets broken
 
-Livewire 1 actions return no value to the browser. Read the new state with `get()` after the promise resolves.
+Livewire 2 needs Livewire's `livewire-turbolinks` adapter after `@livewireScripts`. Without it, Livewire does not restart on visits, and the Assistant has no components to bind to.
 
 ### Coming from pharaonic/livewire-select2
 
-`pharaonic/livewire-select2` requires Livewire 2 and ships its own Select2 initialization script. On Livewire 1, use this package with the [Select2 integration](#select2) instead:
+`pharaonic/livewire-select2` ships its own Select2 initialization script. To replace it on Livewire 2, remove that package and its script, keep jQuery and Select2, and use this package with the [Select2 integration](#select2):
 
 | livewire-select2 | Livewire Assistant |
 | --- | --- |
-| `wire:model` or `wire:model.defer` on the select | `data-property` |
+| `wire:model` on the select | `data-property`; the integration writes with `set()` |
+| `wire:model.defer` on the select | `data-property`, and `set(property, value, { live: false })` in the integration |
 | `data-component-id`, required | `data-component-id`, optional |
 | `data-placeholder`, `data-dir`, `data-language`, `data-tags`, `data-clear` … | Select2 settings in `data-options` |
 | `pharaonic.select2.init` and `pharaonic.select2.load` browser events | `Pharaonic.assistant.scan(element)` |

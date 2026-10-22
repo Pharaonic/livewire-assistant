@@ -1,37 +1,30 @@
 ## Compatibility
 
-Every combination below installs with Composer and passes the PHP suite and the real-browser suite (real Livewire 1 components driven in real browsers) with lowest and highest dependencies. CI also runs the browser suite in WebKit.
+Every combination below installs with Composer and passes PHPStan and the PHP suite with lowest and highest dependencies. The real-browser suite (real Livewire 2 components driven in real browsers) runs on the lowest PHP of each Laravel version, with lowest and highest dependencies. CI also runs the browser suite in WebKit.
 
 | Line | Livewire | Laravel | PHP | Browsers |
 | --- | --- | --- | --- | --- |
-| 1.x | 1.3.0 to 1.3.9, except 1.3.7 | 7.30+ | 7.4 | Chromium, Firefox |
-| 1.x | 1.3.0 to 1.3.9, except 1.3.7 | 8.75+ | 7.4 | Chromium, Firefox |
+| 2.x | 2.12.7+ | 7.30+ | 8.0 | Chromium, Firefox |
+| 2.x | 2.12.7+ | 8.75+ | 8.0, 8.1 | Chromium, Firefox |
+| 2.x | 2.12.7+ | 9 | 8.0, 8.1, 8.2 | Chromium, Firefox |
+| 2.x | 2.12.7+ | 10 | 8.1, 8.2, 8.3 | Chromium, Firefox |
 
-Tested boundaries: Laravel 7.30.3 and 8.75.0 with Livewire 1.3.0 (lowest), and Laravel 7.30.7 and 8.83.29 with Livewire 1.3.9 (highest).
+Tested boundaries: Laravel 7.30.3, 8.75.0, 9.0.0, and 10.0.0 with Livewire 2.12.7 (lowest), and Laravel 7.30.7, 8.83.29, 9.52.22, and 10.50.3 with Livewire 2.12.8 (highest).
 
-### Why PHP 7.4
+The 1.x line supports Livewire 1 on PHP 7.4; its documentation is the 1.x version of these docs.
 
-Every Livewire 1 release requires PHP 7 (`^7.1.3`). PHP 7.4 is the oldest PHP the package's test and analysis tools run on, so the 1.x line supports PHP 7.4 only.
+### Why Livewire 2.12.7
 
-### Why not Livewire 1.3.7
+CVE-2024-47823 (remote code execution through file uploads) affects every Livewire release before 2.12.7. Requiring 2.12.7 keeps it out of every application that installs this line, and every Livewire 2 application can update to it within its major.
 
-The `livewire/livewire` 1.3.7 release on Packagist contains Livewire 2 code: it allows PHP 8, but its browser API and wire format are Livewire 2's. The 1.x line excludes it in Composer, and if it is on a page anyway the runtime reports `livewire-unsupported` instead of binding to an API it does not know.
-
-### How it uses Livewire 1
+### How it uses Livewire 2
 
 - The runtime owns registration, discovery, ownership, the lifecycle, the bridge contract, and diagnostics.
-- It follows Livewire 1 through its documented hooks (`componentInitialized`, `elementInitialized`, `afterElementUpdate`, `elementRemoved`, `responseReceived`, `messageFailed`), component teardown callbacks, and Turbolinks events.
+- It follows Livewire 2 through its documented hooks (`component.initialized`, `element.initialized`, `element.updated`, `element.removed`, `message.sent`, `message.processed`, `message.failed`), component teardown callbacks, and Turbolinks and Turbo events.
+- `set()` with `{ live: true }` and `call()` use Livewire's own `call()`, so they settle with the request that carried them, and `call()` resolves with the method's return value.
 
-Livewire 1 has no public API for two things the bridge needs, so the runtime reads these internals and nothing else: the component's action queue and in-flight message, to settle `set()` and `call()` with the request that carried them, and the component store with its "initial render finished" flag, to detect replaced components and an already started Livewire.
+Livewire 2 has no public API for three things the bridge needs, so the runtime reads these internals and nothing else: the component store with its "initial render finished" flag, to find components and detect replaced ones and an already started Livewire; the component data and its waiting deferred writes, for `get()`; and the actions of each request, to settle a deferred `set()` with the request that carried it.
 
-### What Livewire 1 cannot do
-
-| Contract | On Livewire 1 |
-| --- | --- |
-| `set(path, value, { live: false })` | Rejects with `unsupported-operation`; Livewire 1 has no deferred updates. |
-| `call()` result | Resolves to `undefined`; Livewire 1 actions return no value. |
-| `get()` after `set()` | Shows the new value once the round trip finished. |
-
-:::warning Livewire 1 security
-Livewire 1 no longer receives fixes. CVE-2024-47823 (remote code execution through file uploads) affects every Livewire release before 2.12.7, including all of Livewire 1. This package does not use file uploads, but your application does if it uses Livewire's `WithFileUploads`. Plan your upgrade.
+:::warning Unmaintained Laravel versions
+Laravel 7, 8, 9, and 10 no longer receive security fixes. This line supports them because Livewire 2 does, but your application still carries their advisories. Plan your upgrade to a maintained Laravel version, which means Livewire 3 or later.
 :::

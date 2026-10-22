@@ -40,7 +40,7 @@ Calls you make yourself, such as `register()`, `component.get()`, or `component.
 | `watcher-failed` | A `watch` callback threw | event |
 | `queue-callback-failed` | A queued registration callback threw, or the queue is not an array | event |
 | `stale-context` | A bridge method was used after its instance or component was destroyed | thrown / rejected |
-| `unsupported-operation` | The bridge cannot do this on the page's Livewire version | rejected |
+| `unsupported-operation` | The bridge cannot do this on the page's Livewire version; never raised on Livewire 2 | rejected |
 | `request-failed` | The Livewire request that carried a `set()` or `call()` failed | rejected |
 
 ### Missing integrations

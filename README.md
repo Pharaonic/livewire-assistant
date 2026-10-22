@@ -1,11 +1,11 @@
 <p align="center"><a href="https://pharaonic.dev/packages/livewire/assistant" target="_blank"><img src="https://raw.githubusercontent.com/Pharaonic/livewire-assistant/develop/docs/cover.webp" alt="Livewire Assistant"></a></p>
 
 <p align="center">
-  <a href="https://php.net" target="_blank"><img src="https://img.shields.io/static/v1?label=PHP&message=7.4&color=blue&style=flat-square" alt="PHP Version : 7.4"></a>
-  <a href="https://laravel.com" target="_blank"><img src="https://img.shields.io/static/v1?label=Laravel&message=7.x%20|%208.x&color=F05340&style=flat-square" alt="Laravel Version : 7.x | 8.x"></a>
-  <a href="https://laravel-livewire.com" target="_blank"><img src="https://img.shields.io/static/v1?label=Livewire&message=1.x&color=fb70a9&style=flat-square" alt="Livewire Version : 1.x"></a>
+  <a href="https://php.net" target="_blank"><img src="https://img.shields.io/static/v1?label=PHP&message=8.0%20|%208.1%20|%208.2%20|%208.3&color=blue&style=flat-square" alt="PHP Version : 8.0 | 8.1 | 8.2 | 8.3"></a>
+  <a href="https://laravel.com" target="_blank"><img src="https://img.shields.io/static/v1?label=Laravel&message=7.x%20|%208.x%20|%209.x%20|%2010.x&color=F05340&style=flat-square" alt="Laravel Version : 7.x | 8.x | 9.x | 10.x"></a>
+  <a href="https://laravel-livewire.com" target="_blank"><img src="https://img.shields.io/static/v1?label=Livewire&message=2.x&color=fb70a9&style=flat-square" alt="Livewire Version : 2.x"></a>
   <img src="https://img.shields.io/static/v1?label=License&message=MIT&color=brightgreen&style=flat-square" alt="License">
-  <img src="https://github.com/Pharaonic/livewire-assistant/actions/workflows/build.yml/badge.svg?branch=1.x" alt="Build">
+  <img src="https://github.com/Pharaonic/livewire-assistant/actions/workflows/build.yml/badge.svg?branch=2.x" alt="Build">
   <br>
   <a href="https://packagist.org/packages/Pharaonic/livewire-assistant" target="_blank"><img src="https://img.shields.io/static/v1?label=Packagist&message=pharaonic/livewire-assistant&color=blue&logo=packagist&logoColor=white" alt="Source"></a>
   <a href="https://packagist.org/packages/pharaonic/livewire-assistant" target="_blank"><img src="https://poser.pugx.org/pharaonic/livewire-assistant/v" alt="Packagist Version"></a>
@@ -29,9 +29,9 @@ The service provider is registered automatically. Load the runtime once in your 
 @livewireAssistantScripts
 ```
 
-No Node build is needed. The 1.x line supports Livewire 1 on Laravel 7.30+ and 8.75+ with PHP 7.4.
+No Node build is needed. The 2.x line supports Livewire 2.12.7+ on Laravel 7.30+, 8.75+, 9, and 10 with PHP 8.0 to 8.3. For Livewire 1, use the 1.x line.
 
-Livewire 1, Laravel 7, and Laravel 8 no longer receive security fixes, so recent Composer versions refuse to install or update them until you allow their advisories. The installation guide lists the packages to allow.
+Laravel 7 to 10 no longer receive security fixes, so recent Composer versions refuse to install or update them until you allow their advisories. The installation guide lists the packages to allow.
 
 ## Usage
 

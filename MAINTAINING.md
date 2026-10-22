@@ -13,6 +13,7 @@ One line per Livewire major. `develop` follows the newest line.
 | Line | Livewire | Laravel | PHP |
 | --- | --- | --- | --- |
 | 1.x | `>=1.3.0 <1.3.7 \|\| >=1.3.8 <2.0` | `^7.30 \|\| ^8.75` | `>=7.4 <8.0` |
+| 2.x | `^2.12.7` | `^7.30 \|\| ^8.75 \|\| ^9.0 \|\| ^10.0` | `>=8.0 <8.4` |
 
 Versions are `N.minor.patch`, where `N` is the Livewire major.
 
@@ -31,30 +32,29 @@ None. The PHP side is Laravel glue only; the runtime is JavaScript.
 
 ## Package-specific constraints
 
-- This line serves Livewire 1 only. Everything that touches Livewire lives in `resources/js/livewire.js`, and `resources/js/runtime.js` reaches it only through the connection that file returns, so runtime fixes port between lines unchanged. The Livewire 1 internals it reads are listed at the top of that file.
+- Each line serves one Livewire major. Everything that touches Livewire lives in `resources/js/livewire.js`, and `resources/js/runtime.js` reaches it only through the connection that file returns, so runtime fixes port between lines unchanged. The Livewire internals a line reads are listed at the top of its `livewire.js`.
 - `dist/` is committed so Composer users need no Node build. Run `npm run build` after any change under `resources/js/` and commit the result; CI fails when `dist/` is out of date.
-- Every genuine Livewire 1 release requires PHP 7, so the 1.x line runs on PHP 7.4. Pint cannot install on PHP 7.4: it lives in `tools/pint` and runs on PHP 8.1 (`php8.1 composer format`). `composer check` covers validation, PHPStan, Pest, and the audit on PHP 7.4.
-- `livewire/livewire` 1.3.7 contains Livewire 2 code and is excluded from the constraint.
-- The advisory ignore list covers the Laravel 7/8 framework tree, Livewire 1 (CVE-2024-47823 has no Livewire 1 fix), and `zbateson/mail-mime-parser`, which only reaches the development install through Testbench and has no PHP 7.4 fix.
+- 1.x: every genuine Livewire 1 release requires PHP 7, so the line runs on PHP 7.4. Pint cannot install there: it lives in `tools/pint` on that branch and runs on PHP 8.1. `livewire/livewire` 1.3.7 contains Livewire 2 code and is excluded. The advisory ignore list adds Livewire 1 (CVE-2024-47823 has no Livewire 1 fix) and `zbateson/mail-mime-parser`.
+- 2.x: Livewire 2 supports Laravel 7 to 10, so one line covers four Laravel majors, each on the PHP minors it supports (8.0 to 8.3). `^2.12.7` keeps every Livewire release with CVE-2024-47823 out. CI lists each Laravel major with its PHP minors; `composer check`, including Pint, runs on PHP 8.0 with the highest dependencies, which resolve Laravel 9. Browser tests run on the lowest PHP of each Laravel major, with the `livewire-turbolinks` adapter Livewire 2 needs for Turbolinks and Turbo.
+- The advisory ignore list covers the Laravel framework tree of the line, which no longer receives security fixes, following the Laravel DNA.
 
 ## Verification
 
 ```bash
-php7.4 composer check
-php8.1 composer --working-dir=tools/pint update && php8.1 composer format:check
+php8.0 composer check
 npm ci
 npm run check            # lint, unit tests, dist check, browser tests
 ```
 
-Browser tests start `php -S` on the fixture app in `tests/Browser`. They use `php7.4` unless `FIXTURE_PHP` names another PHP 7.4 binary, and stop with an error on any other PHP version. Set `BROWSERS=chromium,firefox,webkit` to choose browsers. Run them for Laravel 7 and 8 with lowest and highest dependencies, for example:
+Browser tests start `php -S` on the fixture app in `tests/Browser`. They use `php8.0` unless `FIXTURE_PHP` names another PHP 8.0 to 8.3 binary, and stop with an error on any other PHP version. Set `BROWSERS=chromium,firefox,webkit` to choose browsers. Run PHPStan and Pest for every PHP minor of each Laravel major, and the browser tests on its lowest PHP, with lowest and highest dependencies, for example:
 
 ```bash
-php7.4 composer update --with laravel/framework:^7.30 --with orchestra/testbench:^5.20 --prefer-lowest
+php8.1 composer update --with laravel/framework:^10.0 --with orchestra/testbench:^8.0 --prefer-lowest
 ```
 
 ## Branch notes
 
-The repository starts with the 1.x line. Livewire 2, 3, and 4 lines are planned, each with its own `resources/js/livewire.js`.
+The repository started with the 1.x line (Livewire 1); 2.x follows Livewire 2. Livewire 3 and 4 lines are planned, each with its own `resources/js/livewire.js`.
 
 ## Documentation
 

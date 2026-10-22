@@ -2,6 +2,24 @@
 
 All notable changes to this project are documented here.
 
+## 2.0.0 - Unreleased
+
+The first release of the 2.x line, for Livewire 2. The integration API, the component bridge, the attributes, and the error codes are the same as in 1.x.
+
+### Added
+
+- Livewire 2 support, through Livewire 2's documented hooks.
+- Deferred writes: `set(path, value, { live: false })` sends the value with the component's next request, like `wire:model.defer`, and resolves with that request. Until then, `get(path)` returns the deferred value.
+- `call()` resolves with the method's return value.
+- Turbo support next to Turbolinks, with Livewire's `livewire-turbolinks` adapter. The script tag also carries `data-turbo-eval="false"`.
+
+### Compatibility
+
+- Livewire 2.12.7 or later, the first Livewire 2 release with the fix for CVE-2024-47823.
+- Laravel 7.30+ and 8.75+ on PHP 8.0 to 8.1, Laravel 9 on PHP 8.0 to 8.2, and Laravel 10 on PHP 8.1 to 8.3.
+- Livewire 1 stays on the 1.x line.
+- `unsupported-operation` is no longer raised: Livewire 2 performs every bridge operation.
+
 ## 1.0.0 - 2026-10-22
 
 ### Added

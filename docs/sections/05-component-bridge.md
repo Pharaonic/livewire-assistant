@@ -1,13 +1,13 @@
 ## Component Bridge
 
-`context.component` is the only way an integration talks to Livewire. Where Livewire 1 cannot provide something, the bridge says so with an error instead of pretending.
+`context.component` is the only way an integration talks to Livewire.
 
 | Member | Returns |
 | --- | --- |
 | `id` | The component id (string). |
 | `get(path)` | A copy of the current client-side value, or `undefined`. Synchronous. |
 | `set(path, value, { live = true } = {})` | `Promise<undefined>` |
-| `call(method, ...args)` | `Promise<undefined>` on Livewire 1 |
+| `call(method, ...args)` | `Promise` of the method's return value |
 | `watch(path, callback)` | An unsubscribe function. |
 
 ### Property paths
@@ -26,22 +26,19 @@ component.get('country_id')   // 0 (never coerced)
 
 ### set(path, value, { live })
 
-Sends the value to the component property in a Livewire request. The promise resolves after the request that carried this write has finished and the page was updated, and rejects with `request-failed` if that request failed.
+Writes the value to the component property. The promise resolves after the request that carried this write has finished and the page was updated, and rejects with `request-failed` if that request failed.
 
-On Livewire 1:
-
-- every write is live; Livewire 1 has no deferred updates;
-- `{ live: false }` rejects with `unsupported-operation`;
-- `get()` returns the new value only after the round trip, because Livewire 1 does not change client state before the server answers.
+- `{ live: true }`, the default, sends the write right away, like `wire:model`. `get()` returns the new value once the round trip finished.
+- `{ live: false }` defers the write, like `wire:model.defer`: Livewire sends it with the component's next request, and the promise resolves when that request finishes. Until then, `get(path)` with the same path already returns the deferred value.
 
 Values are sent as they are: `0`, `''`, `null`, `false`, and arrays all reach the server unchanged.
 
 ### call(method, ...args)
 
-Calls a public component method. The promise resolves after the request has finished and rejects with `request-failed` if it failed. Livewire 1 actions return nothing to the browser, so the promise resolves to `undefined`.
+Calls a public component method. The promise resolves with the method's return value after the request has finished, and rejects with `request-failed` if it failed. A method that returns nothing, or `null`, resolves to `undefined`.
 
 ```js
-await component.call('save', 'draft')
+const total = await component.call('total', 'EUR') // 42.5
 ```
 
 ### watch(path, callback)

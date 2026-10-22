@@ -37,7 +37,7 @@ Available as `window.Pharaonic.assistant` and as named exports of `dist/livewire
 | `id` | | `string` |
 | `get` | `(path)` | A copy of the value, or `undefined` |
 | `set` | `(path, value, { live = true } = {})` | `Promise<undefined>` |
-| `call` | `(method, ...args)` | `Promise<undefined>` on Livewire 1 |
+| `call` | `(method, ...args)` | `Promise` of the method's return value |
 | `watch` | `(path, callback(value, previousValue))` | An idempotent unsubscribe function |
 
 ### Globals

@@ -16,7 +16,7 @@ An element outside every component and without an explicit id is reported as `co
 
 ### Explicit component
 
-`data-component-id` binds an element to a specific component wherever it is. In a Livewire 1 view, the component id is `$this->id`.
+`data-component-id` binds an element to a specific component wherever it is. In a Livewire 2 view, the component id is `$this->id`.
 
 ```blade title="resources/views/livewire/order.blade.php"
 <select data-pharaonic="select2" data-property="status" data-component-id="{{ $this->id }}"></select>
@@ -41,7 +41,7 @@ Inside `wire:ignore`, Livewire does not touch the element at all:
 - server-side property changes reach the widget only through `component.watch()`.
 
 :::warning Key your ignored blocks
-Livewire 1 morphs siblings by position. When an ignored block can appear or disappear next to other ignored blocks, give each a unique `wire:key`. Otherwise Livewire compares the wrong blocks, skips the one that should change, and removes a different one. Livewire 1 also uses an element's `id` as its key when there is no `wire:key`, so never reuse an inner element's `id` as a `wire:key`.
+Livewire morphs siblings by position. When an ignored block can appear or disappear next to other ignored blocks, give each a unique `wire:key`. Otherwise Livewire compares the wrong blocks, skips the one that should change, and removes a different one. Livewire also uses an element's `id` as its key when there is no `wire:key`, so never reuse an inner element's `id` as a `wire:key`.
 :::
 
 Elements that are not ignored can still be integrations, for example a native input that only listens to events. Livewire then updates their attributes, and the Assistant calls `update()` or remounts them. Do not store integration state in attributes of such elements: the next morph removes them and counts as a change.
@@ -59,4 +59,4 @@ Both include the root element itself, are safe to repeat, and never duplicate an
 
 ### Navigation
 
-Livewire 1 restarts on every Turbolinks visit. Just before Turbolinks caches a page, the Assistant cleans every instance up, so the cached snapshot holds the original elements and not initialized widgets. When the page comes back, through a link, back, or forward, the elements are mounted again with the new components. Full page loads need nothing special.
+Livewire 2 works with Turbolinks and Turbo through Livewire's [`livewire-turbolinks`](https://github.com/livewire/turbolinks) adapter, which restarts Livewire on every visit. Just before Turbolinks or Turbo caches a page, the Assistant cleans every instance up, so the cached snapshot holds the original elements and not initialized widgets. When the page comes back, through a link, back, or forward, the elements are mounted again with the new components. Full page loads need nothing special.
