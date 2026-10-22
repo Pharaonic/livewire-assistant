@@ -3,6 +3,7 @@
     <output id="country-value">{{ json_encode($country) }}</output>
     <output id="tags-value">{{ json_encode($tags) }}</output>
     <output id="size-value">{{ json_encode($filters['size']) }}</output>
+    <output id="country-error">@error('country'){{ $message }}@enderror</output>
 
     @if ($show)
         <div wire:ignore wire:key="country-field">

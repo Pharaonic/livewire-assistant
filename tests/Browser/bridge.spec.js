@@ -2,7 +2,7 @@ import { expect, test } from '@playwright/test'
 import { errors, mounted } from './helpers.js'
 
 /*
- * Exercises the component bridge with real Livewire 3 requests. The probe lives
+ * Exercises the component bridge with real Livewire 4 requests. The probe lives
  * inside a wire:ignore region so morphing keeps it between requests.
  */
 test.beforeEach(async ({ page }) => {
@@ -93,6 +93,18 @@ test('call() resolves with the action result and preserves failures', async ({ p
     })
 
     expect(result).toEqual({ nothing: true, country: '3', doubled: 42, failure: 'request-failed' })
+})
+
+test('validation errors resolve like a successful request', async ({ page }) => {
+    const result = await page.evaluate(async () => {
+        const deferred = window.probe.component.set('country', '4', { live: false })
+        const call = await window.probe.component.call('invalid').then((value) => value === undefined, (error) => error.code)
+
+        return { call, deferred: await deferred.then(() => 'resolved', (error) => error.code) }
+    })
+
+    expect(result).toEqual({ call: true, deferred: 'resolved' })
+    await expect(page.locator('#country-error')).toHaveText('The selected country is invalid.')
 })
 
 test('watch() reports server changes with the previous value until unsubscribed', async ({ page }) => {
