@@ -2,6 +2,22 @@
 
 All notable changes to this project are documented here.
 
+## 4.0.0 - Unreleased
+
+The first release of the 4.x line, for Livewire 4. The integration API, the component bridge, the attributes, and the error codes are the same as in 3.x.
+
+### Added
+
+- Livewire 4 support, through Livewire 4's documented hooks and message interceptors.
+
+### Compatibility
+
+- Livewire 4.3.4 or later, the first Livewire 4 release with no known advisory.
+- Laravel 10.16+ on PHP 8.1 to 8.3, Laravel 11 on PHP 8.2 to 8.4, Laravel 12 on PHP 8.2 to 8.5, and Laravel 13 on PHP 8.3 to 8.5.
+- Laravel 10 starts at 10.16: Livewire 4 calls `prepareStringsForCompilationUsing()` on the Blade compiler, which earlier Laravel 10 releases lack, so every Livewire request fails there.
+- A validation error in a `set()` or `call()` resolves its promise, as on 3.x, although Livewire 4 itself rejects it.
+- Livewire 1, 2, and 3 stay on the 1.x, 2.x, and 3.x lines.
+
 ## 3.0.0 - 2026-10-22
 
 The first release of the 3.x line, for Livewire 3. The integration API, the component bridge, the attributes, and the error codes are the same as in 2.x.
