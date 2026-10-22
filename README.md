@@ -1,6 +1,20 @@
-# Livewire Assistant
+<p align="center"><a href="https://pharaonic.dev/packages/livewire/assistant" target="_blank"><img src="https://raw.githubusercontent.com/Pharaonic/livewire-assistant/develop/docs/cover.webp" alt="Livewire Assistant"></a></p>
 
-Shared Blade and JavaScript foundation that binds JavaScript widgets, such as Select2, to Livewire components: discovery, component ownership, a component bridge, and the mount, update, and cleanup lifecycle.
+<p align="center">
+  <a href="https://php.net" target="_blank"><img src="https://img.shields.io/static/v1?label=PHP&message=7.4&color=blue&style=flat-square" alt="PHP Version : 7.4"></a>
+  <a href="https://laravel.com" target="_blank"><img src="https://img.shields.io/static/v1?label=Laravel&message=7.x%20|%208.x&color=F05340&style=flat-square" alt="Laravel Version : 7.x | 8.x"></a>
+  <a href="https://laravel-livewire.com" target="_blank"><img src="https://img.shields.io/static/v1?label=Livewire&message=1.x&color=fb70a9&style=flat-square" alt="Livewire Version : 1.x"></a>
+  <img src="https://img.shields.io/static/v1?label=License&message=MIT&color=brightgreen&style=flat-square" alt="License">
+  <img src="https://github.com/Pharaonic/livewire-assistant/actions/workflows/build.yml/badge.svg?branch=1.x" alt="Build">
+  <br>
+  <a href="https://packagist.org/packages/Pharaonic/livewire-assistant" target="_blank"><img src="https://img.shields.io/static/v1?label=Packagist&message=pharaonic/livewire-assistant&color=blue&logo=packagist&logoColor=white" alt="Source"></a>
+  <a href="https://packagist.org/packages/pharaonic/livewire-assistant" target="_blank"><img src="https://poser.pugx.org/pharaonic/livewire-assistant/v" alt="Packagist Version"></a>
+  <a href="https://packagist.org/packages/pharaonic/livewire-assistant" target="_blank"><img src="https://poser.pugx.org/pharaonic/livewire-assistant/downloads" alt="Packagist Downloads"></a>
+</p>
+
+<h3 align="center">Bind JavaScript widgets such as Select2 to Livewire components.</h3>
+<h5 align="center">Discovery, component ownership, a component bridge, and the mount, update, and cleanup lifecycle.</h5>
+<br>
 
 ## Installation
 
