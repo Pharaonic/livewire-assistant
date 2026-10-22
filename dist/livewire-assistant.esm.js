@@ -27,7 +27,7 @@ var livewire = {
   },
   detect(win) {
     const instance = win.Livewire;
-    return instance !== null && typeof instance === "object" && typeof instance.hook === "function" && typeof instance.all === "function" && typeof instance.find === "function" && instance.components === void 0 && instance.interceptMessage === void 0;
+    return instance !== null && typeof instance === "object" && typeof instance.hook === "function" && typeof instance.all === "function" && typeof instance.find === "function" && typeof instance.interceptMessage === "function";
   },
   connect(win, events) {
     const livewire2 = win.Livewire;
@@ -75,6 +75,10 @@ var livewire = {
       list.add(operation);
       start2(operation);
     });
+    const follow = (component, operation, promise, result) => promise.then(
+      (value) => operation.resolve(result(value)),
+      (failure) => (failure == null ? void 0 : failure.errors) ? operation.resolve(void 0) : operation.reject(requestFailed(component))
+    );
     livewire2.hook("component.init", ({ component }) => {
       track(component);
       events.componentAdded(component);
@@ -98,15 +102,23 @@ var livewire = {
       }
     });
     livewire2.hook("morph.removed", ({ el }) => events.removed(el));
-    livewire2.hook("commit", ({ component, succeed, fail }) => {
+    livewire2.interceptMessage(({ message, onError, onFailure, onCancel, onFinish }) => {
       var _a;
-      const carried = [...(_a = waiting.get(component)) != null ? _a : []].filter((operation) => !operation.commit);
-      carried.forEach((operation) => operation.commit = true);
-      succeed(() => {
-        carried.filter((operation) => !operation.call).forEach((operation) => operation.resolve(void 0));
+      const component = message.component;
+      const carried = [...(_a = waiting.get(component)) != null ? _a : []].filter((operation) => operation.deferred && !operation.carried);
+      let failed = false;
+      carried.forEach((operation) => operation.carried = true);
+      onError(() => failed = true);
+      onFailure(() => failed = true);
+      onCancel(() => failed = true);
+      onFinish(() => {
+        if (failed) {
+          carried.forEach((operation) => operation.reject(requestFailed(component)));
+          return;
+        }
+        carried.forEach((operation) => operation.resolve(void 0));
         events.settled(component);
       });
-      fail(() => carried.forEach((operation) => operation.reject(requestFailed(component))));
     });
     document.addEventListener("livewire:navigating", () => events.navigating());
     document.addEventListener("livewire:navigated", () => events.ready());
@@ -131,12 +143,19 @@ var livewire = {
         return path.split(".").reduce((carry, segment) => carry === null || carry === void 0 ? void 0 : carry[segment], component.ephemeral);
       },
       set(component, path, value, { live }) {
-        return enqueue(component, () => component.$wire.$set(path, value, live));
+        value = value === void 0 ? void 0 : JSON.parse(JSON.stringify(value));
+        return enqueue(component, (operation) => {
+          if (live) {
+            follow(component, operation, component.$wire.$set(path, value, true), () => void 0);
+            return;
+          }
+          operation.deferred = true;
+          component.$wire.$set(path, value, false);
+        });
       },
       call(component, method, args) {
         return enqueue(component, (operation) => {
-          operation.call = true;
-          component.$wire.$call(method, ...args).then((value) => operation.resolve(value != null ? value : void 0));
+          follow(component, operation, component.$wire.$call(method, ...args), (value) => value != null ? value : void 0);
         });
       }
     };
@@ -224,7 +243,7 @@ function createRuntime({ window: win, livewire: livewire2 }) {
     }
     if (livewire2.present(win)) {
       unsupported = true;
-      report("livewire-unsupported", "The Livewire runtime on this page is not supported by this release of Pharaonic Livewire Assistant; it supports Livewire 3.");
+      report("livewire-unsupported", "The Livewire runtime on this page is not supported by this release of Pharaonic Livewire Assistant; it supports Livewire 4.");
       return;
     }
     const retry = () => {
