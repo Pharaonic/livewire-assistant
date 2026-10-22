@@ -2,7 +2,7 @@ import { expect, test } from '@playwright/test'
 import { errors, mounted } from './helpers.js'
 
 /*
- * Exercises the component bridge with real Livewire 1 requests. The probe lives
+ * Exercises the component bridge with real Livewire 2 requests. The probe lives
  * inside a wire:ignore region so morphing keeps it between requests.
  */
 test.beforeEach(async ({ page }) => {
@@ -52,30 +52,47 @@ test('set() resolves after the round trip and get() then sees the server state',
     await expect(page.locator('#size-value')).toHaveText('"s"')
 })
 
-test('set() rejects deferred writes and invalid paths', async ({ page }) => {
-    const codes = await page.evaluate(async () => {
+test('set() defers a write until the next request and rejects invalid paths', async ({ page }) => {
+    const result = await page.evaluate(async () => {
         const code = (promise) => promise.then(() => 'resolved', (error) => error.code)
+        const deferred = window.probe.component.set('country', '1', { live: false })
+        const settled = { value: false }
 
-        return [
-            await code(window.probe.component.set('country', '1', { live: false })),
-            await code(window.probe.component.set('', '1')),
-            await code(window.probe.component.set(window.probe.property, '1')),
-        ]
+        deferred.then(() => (settled.value = true))
+        await new Promise((resolve) => setTimeout(resolve, 100))
+
+        const before = { settled: settled.value, client: window.probe.component.get('country') }
+
+        await window.probe.component.call('$refresh')
+
+        return {
+            before,
+            after: await code(deferred),
+            server: window.probe.component.get('country'),
+            invalid: [await code(window.probe.component.set('', '1')), await code(window.probe.component.set(window.probe.property, '1'))],
+        }
     })
 
-    expect(codes).toEqual(['unsupported-operation', 'invalid-property', 'invalid-property'])
+    expect(result).toEqual({
+        before: { settled: false, client: '1' },
+        after: 'resolved',
+        server: '1',
+        invalid: ['invalid-property', 'invalid-property'],
+    })
+    await expect(page.locator('#country-value')).toHaveText('"1"')
 })
 
-test('call() resolves after the action and preserves failures', async ({ page }) => {
+test('call() resolves with the action result and preserves failures', async ({ page }) => {
     const result = await page.evaluate(async () => {
-        const value = await window.probe.component.call('setCountry', '3')
+        const nothing = await window.probe.component.call('setCountry', '3')
         const country = window.probe.component.get('country')
+        const doubled = await window.probe.component.call('double', 21)
         const failure = await window.probe.component.call('fail').then(() => null, (error) => error.code)
 
-        return { value: value === undefined, country, failure }
+        return { nothing: nothing === undefined, country, doubled, failure }
     })
 
-    expect(result).toEqual({ value: true, country: '3', failure: 'request-failed' })
+    expect(result).toEqual({ nothing: true, country: '3', doubled: 42, failure: 'request-failed' })
 })
 
 test('watch() reports server changes with the previous value until unsubscribed', async ({ page }) => {

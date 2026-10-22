@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 /*
  * Front controller for the browser suite: `php -S 127.0.0.1:8123 tests/Browser/server.php`.
- * It boots a Testbench application with Livewire 1, this package, and the fixture
+ * It boots a Testbench application with Livewire 2, this package, and the fixture
  * components, and serves the few static files the fixtures need.
  */
 
@@ -20,6 +20,7 @@ $static = [
     '/static/select2.js' => $root.'/node_modules/select2/dist/js/select2.min.js',
     '/static/select2.css' => $root.'/node_modules/select2/dist/css/select2.min.css',
     '/static/turbolinks.js' => $root.'/node_modules/turbolinks/dist/turbolinks.js',
+    '/static/livewire-turbolinks.js' => $root.'/node_modules/livewire-turbolinks/dist/livewire-turbolinks.js',
     '/static/integrations.js' => __DIR__.'/fixtures/integrations.js',
     '/static/livewire-assistant.esm.js' => $root.'/dist/livewire-assistant.esm.js',
 ];

@@ -42,6 +42,11 @@ final class Select2Demo extends Component
         $this->show = ! $this->show;
     }
 
+    public function double(int $value): int
+    {
+        return $value * 2;
+    }
+
     public function fail(): void
     {
         throw new \RuntimeException('Fixture failure.');

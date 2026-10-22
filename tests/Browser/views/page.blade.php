@@ -42,6 +42,9 @@
 
     @if ($livewire === 'real')
         @livewireScripts
+        @if ($turbo)
+            <script src="/static/livewire-turbolinks.js" data-turbolinks-eval="false"></script>
+        @endif
     @endif
 
     @if ($order === 'livewire-first')
