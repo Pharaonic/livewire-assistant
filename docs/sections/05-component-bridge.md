@@ -29,7 +29,7 @@ component.get('country_id')   // 0 (never coerced)
 Writes the value to the component property. The promise resolves after the request that carried this write has finished and the page was updated, and rejects with `request-failed` if that request failed.
 
 - `{ live: true }`, the default, sends the write right away, like `wire:model`. `get()` returns the new value once the round trip finished.
-- `{ live: false }` defers the write, like `wire:model.defer`: Livewire sends it with the component's next request, and the promise resolves when that request finishes. Until then, `get(path)` with the same path already returns the deferred value.
+- `{ live: false }` defers the write, like `wire:model` without `.live`: Livewire sends it with the component's next request, and the promise resolves when that request finishes. Until then, `get(path)` with the same path already returns the deferred value.
 
 Values are sent as they are: `0`, `''`, `null`, `false`, and arrays all reach the server unchanged.
 

@@ -73,7 +73,7 @@ Encode options with `json_encode` inside `{{ }}`. Blade escapes the quotes, and 
 ```
 
 :::warning Not @json with an array literal
-On Laravel 7 and 8, `@json` splits its argument on commas. With an array literal such as `@json(['tags' => true, 'placeholder' => '…'])`, it loses the flags that escape apostrophes, so a translated placeholder like "l'étiquette" ends a single-quoted attribute early, and longer arrays are cut off. Use `@json($options)` with a variable, or `json_encode` as above.
+On every Laravel version this line supports, `@json` splits its argument on commas. With an array literal such as `@json(['tags' => true, 'placeholder' => '…'])`, it loses the flags that escape apostrophes, so a translated placeholder like "l'étiquette" ends a single-quoted attribute early, and longer arrays are cut off. Use `@json($options)` with a variable, or `json_encode` as above.
 :::
 
 ### 4. Content added by your own script

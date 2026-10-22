@@ -28,6 +28,6 @@ Every automatic failure becomes a pharaonic:assistant:error event with a stable 
 The runtime ships prebuilt inside the Composer package and loads through one Blade directive.
 :::
 
-:::info Livewire 2 line
-This documentation covers the 2.x line, which supports Livewire 2. Each Livewire major gets its own line.
+:::info Livewire 3 line
+This documentation covers the 3.x line, which supports Livewire 3. Each Livewire major gets its own line.
 :::

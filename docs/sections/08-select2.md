@@ -1,6 +1,6 @@
 ## Select2 Walkthrough
 
-This is the Select2 integration the package's browser suite runs against real Livewire 2 components. jQuery and Select2 are your application's dependencies; the Assistant does not ship them.
+This is the Select2 integration the package's browser suite runs against real Livewire 3 components. jQuery and Select2 are your application's dependencies; the Assistant does not ship them.
 
 ### 1. The component
 

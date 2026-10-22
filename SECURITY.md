@@ -14,6 +14,8 @@ Security reports will be reviewed before public disclosure or release notes are 
 
 ## Livewire versions
 
+The 3.x line requires Livewire 3.8.3 or later, the first Livewire 3 release with no known advisory (CVE-2026-81887 affects 3.8.2 and earlier, CVE-2025-54068 releases before 3.6.4).
+
 The 2.x line requires Livewire 2.12.7 or later, the first Livewire 2 release with the fix for CVE-2024-47823 (remote code execution through file uploads).
 
 The 1.x line supports Livewire 1, which no longer receives security fixes and has no fix for CVE-2024-47823. This package does not use Livewire file uploads, but applications that do should move to Livewire 2.12.7 or later and the 2.x line.

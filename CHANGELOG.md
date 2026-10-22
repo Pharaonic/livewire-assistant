@@ -2,6 +2,28 @@
 
 All notable changes to this project are documented here.
 
+## 3.0.0 - Unreleased
+
+The first release of the 3.x line, for Livewire 3. The integration API, the component bridge, the attributes, and the error codes are the same as in 2.x.
+
+### Added
+
+- Livewire 3 support, through Livewire 3's documented hooks.
+- `wire:navigate` support: instances are cleaned up before Livewire leaves a page and mounted again on the next one, including back and forward.
+- A failed request rejects `set()` and `call()` with `request-failed`, although Livewire 3 itself never settles those promises.
+
+### Changed
+
+- The script tag carries `data-navigate-once="true"` instead of the Turbolinks and Turbo attributes, so `wire:navigate` loads the runtime once.
+
+### Compatibility
+
+- Livewire 3.8.3 or later, the first Livewire 3 release with no known advisory.
+- Laravel 10.15+ on PHP 8.1 to 8.3, Laravel 11 on PHP 8.2 to 8.4, Laravel 12 on PHP 8.2 to 8.5, and Laravel 13 on PHP 8.3 to 8.5.
+- Laravel 10 starts at 10.15: Livewire 3.8.3 calls `Stringable::isUrl()`, which earlier Laravel 10 releases lack, so every page with Livewire fails there.
+- Livewire 1 and 2 stay on the 1.x and 2.x lines.
+- Turbolinks and Turbo are not supported; Livewire 3 navigates with `wire:navigate`.
+
 ## 2.0.0 - 2026-10-22
 
 The first release of the 2.x line, for Livewire 2. The integration API, the component bridge, the attributes, and the error codes are the same as in 1.x.

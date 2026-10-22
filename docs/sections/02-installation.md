@@ -4,9 +4,9 @@ Install the package with Composer and load its runtime once per page.
 
 ### Requirements
 
-- PHP 8.0 to 8.3, as supported by your Laravel version
-- Laravel 7.30+, 8.75+, 9, or 10
-- Livewire 2.12.7 or later (see [Compatibility](#compatibility))
+- PHP 8.1 to 8.5, as supported by your Laravel version
+- Laravel 10.15+, 11, 12, or 13
+- Livewire 3.8.3 or later (see [Compatibility](#compatibility))
 - A modern browser (ES2019); Internet Explorer is not supported
 
 ### Composer Installation
@@ -17,17 +17,10 @@ composer require pharaonic/livewire-assistant
 
 Laravel discovers `Pharaonic\Livewire\Assistant\AssistantServiceProvider` automatically. There is nothing to publish and no configuration file.
 
-:::warning Composer and unmaintained releases
-Livewire 2.12.7 and later have no known advisories, but every Laravel 7, 8, 9, and 10 release has security advisories that no release in its major fixes. Adding this package to an existing application works, because Composer leaves locked packages alone. When you later install or update the framework, recent Composer versions refuse to resolve it and name each blocked package.
+:::warning Composer and unmaintained Laravel versions
+Livewire 3.8.3 and later, Laravel 12, and Laravel 13 have no known advisories. Every Laravel 10 and 11 release has security advisories that no release in its major fixes. Adding this package to an existing application works, because Composer leaves locked packages alone. When you later install or update Laravel 10 or 11, recent Composer versions refuse to resolve it.
 
-If you accept the risk, allow those packages in your application's `composer.json`. These lists resolve a fresh application with Livewire 2:
-
-| Laravel | Packages to allow |
-| --- | --- |
-| 7 | `laravel/framework`, `league/commonmark`, `league/flysystem` |
-| 8 | `laravel/framework`, `league/flysystem` |
-| 9 on PHP 8.0 | `laravel/framework`, `symfony/http-foundation`, `symfony/mailer`, `symfony/mime`, `symfony/process`, `symfony/routing`, `symfony/yaml` |
-| 9 on PHP 8.1+, 10 | `laravel/framework` |
+If you accept the risk, allow `laravel/framework` in your application's `composer.json`. That is the only package to allow on a fresh Laravel 10 or 11 application with Livewire 3:
 
 ```bash title="Terminal" no-line-numbers
 composer config --json policy.advisories.ignore '{"laravel/framework": "No fixed release within this Laravel major."}'
@@ -36,7 +29,7 @@ composer config --json policy.advisories.ignore '{"laravel/framework": "No fixed
 
 ### Load the Runtime
 
-Add `@livewireAssistantScripts` to your layout. It can go before or after `@livewireScripts`.
+Add `@livewireAssistantScripts` to your layout. It can go before or after Livewire's scripts, whether Livewire injects them automatically or you place `@livewireScripts` yourself.
 
 ```blade title="resources/views/layouts/app.blade.php"
 <body>
@@ -50,7 +43,7 @@ Add `@livewireAssistantScripts` to your layout. It can go before or after `@live
 The directive renders one `<script>` tag per page, even when layouts, partials, and components call it several times. It uses Laravel's own `@once` mechanism.
 
 ```html no-copy
-<script src="https://example.com/pharaonic/livewire-assistant/assistant.js?id=3f9a1c2b7d4e5f60" data-turbo-eval="false" data-turbolinks-eval="false"></script>
+<script src="https://example.com/pharaonic/livewire-assistant/assistant.js?id=3f9a1c2b7d4e5f60" data-navigate-once="true"></script>
 ```
 
 ### Content Security Policy
@@ -83,7 +76,7 @@ After `composer update`, the hash changes, so browsers fetch the new runtime on 
 To load the script without the directive, use the route name:
 
 ```blade title="resources/views/layouts/app.blade.php"
-<script src="{{ route('pharaonic.livewire-assistant.script') }}" data-turbo-eval="false" data-turbolinks-eval="false"></script>
+<script src="{{ route('pharaonic.livewire-assistant.script') }}" data-navigate-once="true"></script>
 ```
 
 Without an `id`, the browser revalidates on every load. Prefer the directive.

@@ -16,10 +16,10 @@ An element outside every component and without an explicit id is reported as `co
 
 ### Explicit component
 
-`data-component-id` binds an element to a specific component wherever it is. In a Livewire 2 view, the component id is `$this->id`.
+`data-component-id` binds an element to a specific component wherever it is. In a Livewire 3 view, the component id is `$this->getId()`.
 
 ```blade title="resources/views/livewire/order.blade.php"
-<select data-pharaonic="select2" data-property="status" data-component-id="{{ $this->id }}"></select>
+<select data-pharaonic="select2" data-property="status" data-component-id="{{ $this->getId() }}"></select>
 ```
 
 If no component has that id, the Assistant reports `component-not-found` and does **not** fall back to another component. The element is mounted later if a component with that id initializes; there is no polling.
@@ -59,4 +59,6 @@ Both include the root element itself, are safe to repeat, and never duplicate an
 
 ### Navigation
 
-Livewire 2 works with Turbolinks and Turbo through Livewire's [`livewire-turbolinks`](https://github.com/livewire/turbolinks) adapter, which restarts Livewire on every visit. Just before Turbolinks or Turbo caches a page, the Assistant cleans every instance up, so the cached snapshot holds the original elements and not initialized widgets. When the page comes back, through a link, back, or forward, the elements are mounted again with the new components. Full page loads need nothing special.
+Livewire 3 navigates with `wire:navigate`. Just before it leaves a page, the Assistant cleans every instance up, so the page Livewire keeps for the back button holds the original elements and not initialized widgets. When a page is shown, through a link, back, or forward, the elements are mounted again with the new components. Full page loads need nothing special.
+
+`wire:navigate` runs every `<script>` in the new page's body again, unless it has `data-navigate-once`. The runtime's tag has it. Give your integration scripts `data-navigate-once` too, or load them in `<head>`, which Livewire merges instead of running again: a script that runs again registers a new definition object under the same name, which throws `registration-conflict`.

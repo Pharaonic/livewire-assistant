@@ -6,7 +6,7 @@ The `data-pharaonic` name was never registered. Check the spelling, and that you
 
 ### `livewire-unsupported` is reported
 
-The page runs a Livewire major this line does not support. The 2.x line supports Livewire 2 only; use the 1.x line for Livewire 1.
+The page runs a Livewire major this line does not support. The 3.x line supports Livewire 3 only; use the 1.x line for Livewire 1 and the 2.x line for Livewire 2.
 
 ### The runtime script returns 404
 
@@ -14,11 +14,11 @@ The web server answers `.js` URLs from `public/` without asking Laravel. Let `/p
 
 ### Composer refuses to install Laravel
 
-Composer blocks releases with security advisories when it installs or updates them, and no Laravel 7, 8, 9, or 10 release is free of them. See the warning in [Installation](#installation) for the packages to allow on each Laravel version.
+Composer blocks releases with security advisories when it installs or updates them, and no Laravel 10 or 11 release is free of them. See the warning in [Installation](#installation).
 
-### Composer refuses Livewire below 2.12.7
+### Composer refuses Livewire below 3.8.3
 
-The 2.x line requires Livewire 2.12.7 or later, the first Livewire 2 release with the fix for CVE-2024-47823. Update Livewire within its major: `composer update livewire/livewire`.
+The 3.x line requires Livewire 3.8.3 or later, the first Livewire 3 release with no known advisory. Update Livewire within its major: `composer update livewire/livewire`.
 
 ### Typing in an input jumps back to older text
 
@@ -52,13 +52,13 @@ The integration applies server values in a way that fires its own change handler
 
 `set(..., { live: false })` resolves with the component's next request. If nothing sends one, call an action, for example `component.call('$refresh')`, or write with `{ live: true }`.
 
-### Navigating with Turbolinks or Turbo leaves widgets broken
+### `registration-conflict` after a `wire:navigate` visit
 
-Livewire 2 needs Livewire's `livewire-turbolinks` adapter after `@livewireScripts`. Without it, Livewire does not restart on visits, and the Assistant has no components to bind to.
+`wire:navigate` ran your integration script again, and it registered a new definition object under the same name. Add `data-navigate-once` to the script tag, or load it in `<head>`. See [Navigation](#targeting).
 
 ### Coming from pharaonic/livewire-select2
 
-`pharaonic/livewire-select2` ships its own Select2 initialization script. To replace it on Livewire 2, remove that package and its script, keep jQuery and Select2, and use this package with the [Select2 integration](#select2):
+`pharaonic/livewire-select2` ships its own Select2 initialization script. On Livewire 3, use this package with the [Select2 integration](#select2) instead; keep jQuery and Select2:
 
 | livewire-select2 | Livewire Assistant |
 | --- | --- |
