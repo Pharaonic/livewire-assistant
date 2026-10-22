@@ -32,8 +32,6 @@ Livewire 1 has no public API for two things the bridge needs, so the runtime rea
 | `call()` result | Resolves to `undefined`; Livewire 1 actions return no value. |
 | `get()` after `set()` | Shows the new value once the round trip finished. |
 
-Later lines for Livewire 2, 3, and 4 keep the same contract.
-
 :::warning Livewire 1 security
 Livewire 1 no longer receives fixes. CVE-2024-47823 (remote code execution through file uploads) affects every Livewire release before 2.12.7, including all of Livewire 1. This package does not use file uploads, but your application does if it uses Livewire's `WithFileUploads`. Plan your upgrade.
 :::

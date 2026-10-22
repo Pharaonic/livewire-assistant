@@ -12,9 +12,13 @@ The page runs a Livewire major this line does not support. The 1.x line supports
 
 The web server answers `.js` URLs from `public/` without asking Laravel. Let `/pharaonic/livewire-assistant/assistant.js` fall through to `index.php`, as Livewire's own `/livewire/livewire.js` must.
 
-### Composer refuses to install Livewire 1
+### Composer refuses to install Livewire 1 or Laravel
 
-Composer blocks releases with security advisories, and every Livewire 1 release has one. See the warning in [Installation](#installation).
+Composer blocks releases with security advisories when it installs or updates them, and no Livewire 1, Laravel 7, or Laravel 8 release is free of them. See the warning in [Installation](#installation) for the packages to allow.
+
+### Typing in an input jumps back to older text
+
+The integration applies every value `watch()` reports, including values from requests the user has already typed past. Leave the focused input alone, as in [Basic Usage](#basic-usage).
 
 ### `livewire-missing` is reported
 
@@ -48,14 +52,14 @@ Livewire 1 has no deferred updates. Omit the option; every write is sent immedia
 
 Livewire 1 actions return no value to the browser. Read the new state with `get()` after the promise resolves.
 
-### Migrating from pharaonic/livewire-select2
+### Coming from pharaonic/livewire-select2
 
-`pharaonic/livewire-select2` requires Livewire 2 and bundles its own Select2 loader. On Livewire 1, use this package with the [Select2 integration](#select2) instead:
+`pharaonic/livewire-select2` requires Livewire 2 and ships its own Select2 initialization script. On Livewire 1, use this package with the [Select2 integration](#select2) instead:
 
 | livewire-select2 | Livewire Assistant |
 | --- | --- |
 | `wire:model` or `wire:model.defer` on the select | `data-property` |
-| `data-component-id` | `data-component-id` (now optional) |
-| `data-placeholder`, `data-dir`, `data-language` … | Select2 settings in `data-options` |
-| `pharaonic.select2.load` browser event | `Pharaonic.assistant.scan(element)` |
-| Only `select2:select` synced, one way | Two-way sync, including clearing and server changes |
+| `data-component-id`, required | `data-component-id`, optional |
+| `data-placeholder`, `data-dir`, `data-language`, `data-tags`, `data-clear` … | Select2 settings in `data-options` |
+| `pharaonic.select2.init` and `pharaonic.select2.load` browser events | `Pharaonic.assistant.scan(element)` |
+| Widget changes sent to Livewire, one way | Two-way sync, including clearing and server changes |

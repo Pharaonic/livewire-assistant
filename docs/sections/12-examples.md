@@ -2,7 +2,7 @@
 
 ### 1. A dependency-free input
 
-An integration does not need jQuery. This one binds a plain input to a property and keeps it in step with server changes.
+An integration does not need jQuery. This one binds a plain input to a property, keeps it in step with server changes, and releases its listener through `onCleanup` instead of a returned function.
 
 ```js title="resources/js/integrations/live-input.js"
 const liveInput = {
@@ -10,7 +10,8 @@ const liveInput = {
         const apply = (value) => {
             const next = value === null || value === undefined ? '' : String(value)
 
-            if (element.value !== next) {
+            // Never overwrite what the user is still typing.
+            if (element !== document.activeElement && element.value !== next) {
                 element.value = next
             }
         }
@@ -63,13 +64,17 @@ Integrations that only trigger actions need no `data-property`.
 
 ### 3. Options from PHP
 
-Encode options with `@json` inside a single-quoted attribute: its default flags escape apostrophes, quotes, and HTML characters inside the values.
+Encode options with `json_encode` inside `{{ }}`. Blade escapes the quotes, and the browser decodes them again when it reads the attribute, so any value is safe.
 
 ```blade title="resources/views/livewire/tags.blade.php"
 <div wire:ignore wire:key="tags-field">
-    <select multiple data-pharaonic="select2" data-property="tags" data-options='@json(["tags" => true, "placeholder" => __("Add tags")])'></select>
+    <select multiple data-pharaonic="select2" data-property="tags" data-options="{{ json_encode(['tags' => true, 'placeholder' => __('Add tags')]) }}"></select>
 </div>
 ```
+
+:::warning Not @json with an array literal
+On Laravel 7 and 8, `@json` splits its argument on commas. With an array literal such as `@json(['tags' => true, 'placeholder' => '…'])`, it loses the flags that escape apostrophes, so a translated placeholder like "l'étiquette" ends a single-quoted attribute early, and longer arrays are cut off. Use `@json($options)` with a variable, or `json_encode` as above.
+:::
 
 ### 4. Content added by your own script
 

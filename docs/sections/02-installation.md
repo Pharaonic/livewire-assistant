@@ -17,12 +17,16 @@ composer require pharaonic/livewire-assistant
 
 Laravel discovers `Pharaonic\Livewire\Assistant\AssistantServiceProvider` automatically. There is nothing to publish and no configuration file.
 
-:::warning Composer blocks Livewire 1 by default
-Current Composer versions refuse to install packages with known security advisories. Every Livewire 1 release is affected by CVE-2024-47823 and none will receive a fix, so a Livewire 1 application must allow that advisory explicitly. If its `minimum-stability` is `dev`, Composer may otherwise silently pick the `1.x-dev` branch instead. Read [Compatibility](#compatibility) before accepting the risk.
+:::warning Composer and unmaintained releases
+Every Livewire 1 release, and every Laravel 7 and 8 release, has security advisories that no release in its major fixes. Adding this package to an existing application works, because Composer leaves locked packages alone. When you later install or update those packages, recent Composer versions refuse to resolve them and name each blocked package.
+
+If you accept the risk, allow them in your application's `composer.json`. This list resolves a fresh Laravel 7.30+ or 8.75+ application with Livewire 1:
 
 ```bash title="Terminal" no-line-numbers
-composer config --json policy.advisories.ignore '{"livewire/livewire": "Livewire 1 has no fixed release."}'
+composer config --json policy.advisories.ignore '{"livewire/livewire": "No fixed release within Livewire 1.", "laravel/framework": "No fixed release within this Laravel major.", "league/commonmark": "No fixed release within this Laravel major.", "league/flysystem": "No fixed release within this Laravel major."}'
 ```
+
+Read [Compatibility](#compatibility) before accepting the risk.
 :::
 
 ### Load the Runtime

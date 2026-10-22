@@ -20,7 +20,7 @@ window.addEventListener('pharaonic:assistant:error', (event) => {
 
 Reports never contain property values or component state. When an error has a cause, such as the exception a `mount` threw, it is passed to `console.error` but not put in the event.
 
-Calls you make yourself, such as `register()`, `scan()`, or `component.set()`, throw or reject with an `Error` whose `code` property holds the same codes.
+Calls you make yourself, such as `register()`, `component.get()`, or `component.set()`, throw or reject with an `Error` whose `code` property holds the same codes. `scan()` and `destroy()` never throw; what they find goes to the event.
 
 ### Error codes
 

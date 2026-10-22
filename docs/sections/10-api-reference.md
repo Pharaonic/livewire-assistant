@@ -9,9 +9,9 @@ Available as `window.Pharaonic.assistant` and as named exports of `dist/livewire
 | `register(name, definition)` | Registers an integration and mounts its elements when Livewire is ready. | An idempotent `unregister()` function |
 | `start()` | Connects to Livewire and installs its hooks once. Called automatically when the runtime loads; calling it again does nothing. | `undefined` |
 | `scan(root = document)` | Mounts every eligible element in `root`, including `root` itself. Does nothing until Livewire is ready. | `undefined` |
-| `destroy(root = document)` | Cleans every instance in `root`, including `root` itself, up and forgets failed mounts there. | `undefined` |
+| `destroy(root = document)` | Cleans up every instance in `root`, including `root` itself, and forgets failed mounts there. | `undefined` |
 
-`scan` and `destroy` accept an element, a document, or a document fragment.
+`scan` and `destroy` take an element or the document. Elements that are not in the page are never mounted.
 
 ### Integration definition
 

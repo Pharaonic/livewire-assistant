@@ -52,7 +52,7 @@ Elements that Livewire adds are mounted after Livewire finishes the update, and 
 
 ```js
 Pharaonic.assistant.scan(container)     // mounts the container and everything matching inside it
-Pharaonic.assistant.destroy(container)  // cleans the container and everything inside it up
+Pharaonic.assistant.destroy(container)  // cleans up the container and everything inside it
 ```
 
 Both include the root element itself, are safe to repeat, and never duplicate an instance. `destroy()` also forgets failed mounts, so a following `scan()` tries them again. The Assistant does not observe the whole document for mutations.

@@ -18,7 +18,7 @@ const unregister = Pharaonic.assistant.register('example', {
 })
 ```
 
-- `name` is letters, digits, `.`, `:`, `_` or `-`, trimmed. Anything else throws `invalid-registration`.
+- `name` starts with a letter or digit and continues with letters, digits, `.`, `:`, `_` or `-`; surrounding whitespace is trimmed. Anything else throws `invalid-registration`.
 - `definition.mount` is required; `definition.update` is optional. Anything else throws `invalid-registration`.
 - Registering the same definition object under the same name again is harmless and returns the same `unregister`.
 - A different definition under a taken name throws `registration-conflict` and leaves the live instances alone.
@@ -77,4 +77,4 @@ An element that only moves inside its component keeps its instance.
 }
 ```
 
-The context and the bridge are frozen. `onCleanup(callback)` adds a disposer owned by this instance; after the instance is gone it runs the callback immediately. Old contexts never act on a component that was destroyed or replaced: their bridge rejects with `stale-context`.
+The context and the bridge are frozen. `onCleanup(callback)` adds a disposer owned by this instance; after the instance is gone it runs the callback immediately. Old contexts never act on a component that was destroyed or replaced: their bridge throws (`get`, `watch`) or rejects (`set`, `call`) with `stale-context`.

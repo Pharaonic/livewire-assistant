@@ -15,7 +15,9 @@ The service provider is registered automatically. Load the runtime once in your 
 @livewireAssistantScripts
 ```
 
-No Node build is needed. The 1.x line supports Livewire 1 on Laravel 7.30+ and 8.75+ with PHP 7.4; see the [compatibility table](https://pharaonic.dev/packages/livewire/assistant) for the tested matrix.
+No Node build is needed. The 1.x line supports Livewire 1 on Laravel 7.30+ and 8.75+ with PHP 7.4.
+
+Livewire 1, Laravel 7, and Laravel 8 no longer receive security fixes, so recent Composer versions refuse to install or update them until you allow their advisories. The installation guide lists the packages to allow.
 
 ## Usage
 
@@ -42,11 +44,11 @@ Pharaonic.assistant.register('select2', {
 })
 ```
 
-The documentation has the complete Select2 integration, including loop prevention.
+Load this script after `@livewireAssistantScripts`, or register through `window.PharaonicAssistantQueue` so the order does not matter. jQuery and Select2 are your application's dependencies. The documentation has the complete Select2 integration, including loop prevention.
 
 ## Documentation
 
-Full documentation: https://pharaonic.dev/packages/livewire/assistant
+Read the full [Livewire Assistant documentation](https://pharaonic.dev/packages/livewire/assistant) for installation, writing integrations, the component bridge, and examples.
 
 ## Support & Security
 

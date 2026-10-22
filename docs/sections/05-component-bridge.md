@@ -1,6 +1,6 @@
 ## Component Bridge
 
-`context.component` is the only way an integration talks to Livewire. Its behavior is the same for every Livewire version the package supports; where Livewire 1 cannot provide something, the bridge says so with an error instead of pretending.
+`context.component` is the only way an integration talks to Livewire. Where Livewire 1 cannot provide something, the bridge says so with an error instead of pretending.
 
 | Member | Returns |
 | --- | --- |
