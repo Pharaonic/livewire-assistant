@@ -16,7 +16,7 @@ The first release of the 2.x line, for Livewire 2. The integration API, the comp
 ### Compatibility
 
 - Livewire 2.12.7 or later, the first Livewire 2 release with the fix for CVE-2024-47823.
-- Laravel 7.30+ and 8.75+ on PHP 8.0 to 8.1, Laravel 9 on PHP 8.0 to 8.2, and Laravel 10 on PHP 8.1 to 8.3.
+- Laravel 7.30+ on PHP 8.0, Laravel 8.75+ on PHP 8.0 to 8.1, Laravel 9 on PHP 8.0 to 8.2, and Laravel 10 on PHP 8.1 to 8.3.
 - Livewire 1 stays on the 1.x line.
 - `unsupported-operation` is no longer raised: Livewire 2 performs every bridge operation.
 
