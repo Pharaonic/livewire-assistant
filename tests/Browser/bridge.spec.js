@@ -2,7 +2,7 @@ import { expect, test } from '@playwright/test'
 import { errors, mounted } from './helpers.js'
 
 /*
- * Exercises the component bridge with real Livewire 2 requests. The probe lives
+ * Exercises the component bridge with real Livewire 3 requests. The probe lives
  * inside a wire:ignore region so morphing keeps it between requests.
  */
 test.beforeEach(async ({ page }) => {

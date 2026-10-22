@@ -2,7 +2,7 @@
     $order = request('order', 'livewire-first');
     $registration = request('registration', 'queue');
     $livewire = request('livewire', 'real');
-    $turbo = \Illuminate\Support\Str::startsWith($fixture, 'turbo');
+    $navigate = \Illuminate\Support\Str::startsWith($fixture, 'navigate');
     $scriptUrl = route('pharaonic.livewire-assistant.script', ['id' => \Pharaonic\Livewire\Assistant\Script::version()]);
 @endphp
 <!DOCTYPE html>
@@ -19,8 +19,8 @@
     </script>
     <script src="/static/jquery.js"></script>
     <script src="/static/select2.js"></script>
-    @if ($turbo)
-        <script src="/static/turbolinks.js"></script>
+    {{-- wire:navigate merges the head instead of re-running it, so integrations register once. --}}
+    @if ($navigate)
         <script src="/static/integrations.js"></script>
     @endif
     @livewireStyles
@@ -28,7 +28,7 @@
 <body>
     @include('fixtures::fixtures.'.$fixture)
 
-    @if (! $turbo && $registration === 'queue')
+    @if (! $navigate && $registration === 'queue')
         <script src="/static/integrations.js"></script>
     @endif
 
@@ -42,9 +42,6 @@
 
     @if ($livewire === 'real')
         @livewireScripts
-        @if ($turbo)
-            <script src="/static/livewire-turbolinks.js" data-turbolinks-eval="false"></script>
-        @endif
     @endif
 
     @if ($order === 'livewire-first')
@@ -66,11 +63,11 @@
         </script>
     @endif
 
-    @if (! $turbo && $registration === 'direct')
+    @if (! $navigate && $registration === 'direct')
         <script src="/static/integrations.js"></script>
     @endif
 
-    @if (! $turbo && $registration === 'late')
+    @if (! $navigate && $registration === 'late')
         <script>
             window.addEventListener('load', function () {
                 setTimeout(function () {
