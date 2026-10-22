@@ -1,17 +1,18 @@
 import { assistantError } from './diagnostics.js'
 
 /**
- * Livewire 1 connection.
+ * Livewire 2 connection.
  *
- * Livewire 1 exposes its class as `window.Livewire` and the page instance as
- * `window.livewire`. Documented hooks (`livewire.hook`) drive discovery and
- * updates. Two internals are read because Livewire 1 offers no public API for
- * them, and both are confined to this file:
+ * `@livewireScripts` replaces the `window.Livewire` class with the page
+ * instance before the page loads. Documented hooks (`Livewire.hook`) drive
+ * discovery and updates. Three internals are read because Livewire 2 offers
+ * no public API for them, and all are confined to this file:
  *
- * - `component.actionQueue` and `component.messageInTransit`, to settle the
- *   promise of `set()` and `call()` with the request that carried the action;
- * - `livewire.components.componentsById` and `initialRenderIsFinished`, to
- *   detect replaced components and an already started Livewire.
+ * - `Livewire.components.componentsById` and `initialRenderIsFinished`, to
+ *   find components, detect replaced ones, and detect an already started Livewire;
+ * - `component.data` and `component.deferredActions`, to read client state
+ *   including writes that wait for the next request;
+ * - `message.updateQueue`, to settle a deferred write with the request that carried it.
  */
 export const livewire = {
     present(win) {
@@ -19,15 +20,23 @@ export const livewire = {
     },
 
     detect(win) {
-        return typeof win.Livewire === 'function' && win.livewire instanceof win.Livewire
+        const instance = win.Livewire
+
+        return instance !== null
+            && typeof instance === 'object'
+            && typeof instance.hook === 'function'
+            && typeof instance.components?.componentsById === 'object'
+            && typeof instance.components?.hooks?.availableHooks?.includes === 'function'
+            && instance.components.hooks.availableHooks.includes('message.processed')
     },
 
     connect(win, events) {
-        const livewire = win.livewire
+        const livewire = win.Livewire
         const store = livewire.components
         const document = win.document
         const tracked = new WeakSet()
-        const operations = new Map()
+        // Promises waiting for a request, per component: { resolve, reject, message? }.
+        const deferred = new Map()
 
         const track = (component) => {
             if (component && !tracked.has(component)) {
@@ -41,76 +50,90 @@ export const livewire = {
             return component
         }
 
-        const settle = (component, outcome) => {
-            const message = component.messageInTransit
-            const list = operations.get(component)
+        const pendingOf = (component) => {
+            let list = deferred.get(component)
 
-            if (!message || !list) {
-                return
+            if (!list) {
+                list = new Set()
+                deferred.set(component, list)
             }
 
-            for (const operation of [...list]) {
-                if (message.actionQueue.includes(operation.action)) {
-                    list.splice(list.indexOf(operation), 1)
+            return list
+        }
+
+        const rejectAll = (component, error) => {
+            const list = deferred.get(component) ?? new Set()
+
+            for (const operation of list) {
+                operation.reject(error())
+            }
+
+            // Cleared, so a request that still answers later settles nothing twice.
+            list.clear()
+            deferred.delete(component)
+        }
+
+        // Livewire rejects with nothing useful; callers get a coded error instead.
+        const requestFailed = (component) => assistantError('request-failed', `The Livewire request of component "${component.id}" failed.`)
+
+        // A live write or call: Livewire's own promise settles with the request.
+        const send = (component, method, params) => new Promise((resolve, reject) => {
+            const operation = { resolve, reject }
+            const list = pendingOf(component)
+
+            list.add(operation)
+            component.call(method, ...params).then(
+                (value) => list.delete(operation) && resolve(value),
+                () => list.delete(operation) && reject(requestFailed(component)),
+            )
+        })
+
+        livewire.hook('component.initialized', (component) => {
+            track(component)
+            events.componentAdded(component)
+        })
+
+        livewire.hook('element.initialized', (element) => {
+            if (element.hasAttribute?.('data-pharaonic')) {
+                events.added(element)
+            }
+        })
+
+        livewire.hook('element.updated', (element) => events.changed(element))
+        livewire.hook('element.removed', (element) => events.removed(element))
+
+        // Livewire sends every waiting deferred write with the next request of the component.
+        livewire.hook('message.sent', (message, component) => {
+            for (const operation of deferred.get(component) ?? []) {
+                if (operation.deferred && !operation.message) {
+                    operation.message = message
+                }
+            }
+        })
+
+        const finish = (message, component, outcome) => {
+            const list = deferred.get(component)
+
+            for (const operation of [...(list ?? [])]) {
+                if (operation.message === message) {
+                    list.delete(operation)
                     outcome(operation)
                 }
             }
         }
 
-        const rejectAll = (component, error) => {
-            for (const operation of operations.get(component) ?? []) {
-                operation.reject(error())
-            }
-
-            operations.delete(component)
-        }
-
-        const send = (component, dispatch) => new Promise((resolve, reject) => {
-            const queue = component.actionQueue
-            const length = queue.length
-
-            dispatch()
-
-            // A prefetched response is applied synchronously without queueing the action.
-            if (component.actionQueue !== queue || queue.length === length) {
-                resolve(undefined)
-
-                return
-            }
-
-            const list = operations.get(component) ?? []
-
-            list.push({ action: queue[queue.length - 1], resolve, reject })
-            operations.set(component, list)
-        })
-
-        livewire.hook('componentInitialized', (component) => {
-            track(component)
-            events.componentAdded(component)
-        })
-
-        livewire.hook('elementInitialized', (element) => {
-            if (element.el.hasAttribute('data-pharaonic')) {
-                events.added(element.el)
-            }
-        })
-
-        livewire.hook('afterElementUpdate', (node) => events.changed(node))
-        livewire.hook('elementRemoved', (element) => events.removed(element.el))
-
-        livewire.hook('responseReceived', (component) => {
-            settle(component, (operation) => operation.resolve(undefined))
+        livewire.hook('message.processed', (message, component) => {
+            finish(message, component, (operation) => operation.resolve(undefined))
             events.settled(component)
         })
 
-        livewire.hook('messageFailed', (component) => {
-            settle(component, (operation) => operation.reject(
-                assistantError('request-failed', `The Livewire request of component "${component.id}" failed.`),
-            ))
+        livewire.hook('message.failed', (message, component) => {
+            finish(message, component, (operation) => operation.reject(requestFailed(component)))
         })
 
-        // Livewire 1 restarts on every Turbolinks visit; widgets must leave the cached snapshot clean.
+        // Widgets must leave the cached snapshot clean before a Turbolinks or Turbo visit.
         document.addEventListener('turbolinks:before-cache', () => events.navigating())
+        document.addEventListener('turbo:before-cache', () => events.navigating())
         document.addEventListener('livewire:load', () => events.ready())
 
         if (store.initialRenderIsFinished) {
@@ -136,21 +159,30 @@ export const livewire = {
                 return store.componentsById[component.id] === component
             },
 
+            // A deferred write is part of the client state until it is sent.
             get(component, path) {
+                const waiting = component.deferredActions?.[path]
+
+                if (waiting) {
+                    return waiting.payload.value
+                }
+
                 return path.split('.').reduce((carry, segment) => (carry === null || carry === undefined ? undefined : carry[segment]), component.data)
             },
 
             set(component, path, value, { live }) {
-                if (!live) {
-                    return Promise.reject(assistantError('unsupported-operation', 'Deferred writes ({ live: false }) need Livewire 2 or newer; Livewire 1 sends every write immediately.'))
+                if (live) {
+                    return send(component, '$set', [path, value]).then(() => undefined)
                 }
 
-                return send(component, () => component.set(path, value))
+                return new Promise((resolve, reject) => {
+                    pendingOf(component).add({ deferred: true, resolve, reject })
+                    component.set(path, value, true)
+                })
             },
 
             call(component, method, args) {
-                // Livewire 1 actions return no value to the browser.
-                return send(component, () => component.call(method, ...args))
+                return send(component, method, args).then((value) => value ?? undefined)
             },
         }
     },

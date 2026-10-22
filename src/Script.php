@@ -77,6 +77,6 @@ final class Script
         $src = URL::route(self::ROUTE, ['id' => self::version()]);
         $nonceAttribute = $nonce === null ? '' : ' nonce="'.e($nonce).'"';
 
-        return '<script src="'.e($src).'" data-turbolinks-eval="false"'.$nonceAttribute.'></script>';
+        return '<script src="'.e($src).'" data-turbo-eval="false" data-turbolinks-eval="false"'.$nonceAttribute.'></script>';
     }
 }

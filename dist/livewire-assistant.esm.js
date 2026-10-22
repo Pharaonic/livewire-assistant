@@ -26,14 +26,16 @@ var livewire = {
     return win.livewire !== void 0 || win.Livewire !== void 0;
   },
   detect(win) {
-    return typeof win.Livewire === "function" && win.livewire instanceof win.Livewire;
+    var _a, _b, _c, _d;
+    const instance = win.Livewire;
+    return instance !== null && typeof instance === "object" && typeof instance.hook === "function" && typeof ((_a = instance.components) == null ? void 0 : _a.componentsById) === "object" && typeof ((_d = (_c = (_b = instance.components) == null ? void 0 : _b.hooks) == null ? void 0 : _c.availableHooks) == null ? void 0 : _d.includes) === "function" && instance.components.hooks.availableHooks.includes("message.processed");
   },
   connect(win, events) {
-    const livewire2 = win.livewire;
+    const livewire2 = win.Livewire;
     const store = livewire2.components;
     const document = win.document;
     const tracked = /* @__PURE__ */ new WeakSet();
-    const operations = /* @__PURE__ */ new Map();
+    const deferred = /* @__PURE__ */ new Map();
     const track = (component) => {
       if (component && !tracked.has(component)) {
         tracked.add(component);
@@ -44,60 +46,71 @@ var livewire = {
       }
       return component;
     };
-    const settle = (component, outcome) => {
-      const message = component.messageInTransit;
-      const list = operations.get(component);
-      if (!message || !list) {
-        return;
+    const pendingOf = (component) => {
+      let list = deferred.get(component);
+      if (!list) {
+        list = /* @__PURE__ */ new Set();
+        deferred.set(component, list);
       }
-      for (const operation of [...list]) {
-        if (message.actionQueue.includes(operation.action)) {
-          list.splice(list.indexOf(operation), 1);
+      return list;
+    };
+    const rejectAll = (component, error) => {
+      var _a;
+      const list = (_a = deferred.get(component)) != null ? _a : /* @__PURE__ */ new Set();
+      for (const operation of list) {
+        operation.reject(error());
+      }
+      list.clear();
+      deferred.delete(component);
+    };
+    const requestFailed = (component) => assistantError("request-failed", `The Livewire request of component "${component.id}" failed.`);
+    const send = (component, method, params) => new Promise((resolve, reject) => {
+      const operation = { resolve, reject };
+      const list = pendingOf(component);
+      list.add(operation);
+      component.call(method, ...params).then(
+        (value) => list.delete(operation) && resolve(value),
+        () => list.delete(operation) && reject(requestFailed(component))
+      );
+    });
+    livewire2.hook("component.initialized", (component) => {
+      track(component);
+      events.componentAdded(component);
+    });
+    livewire2.hook("element.initialized", (element) => {
+      var _a;
+      if ((_a = element.hasAttribute) == null ? void 0 : _a.call(element, "data-pharaonic")) {
+        events.added(element);
+      }
+    });
+    livewire2.hook("element.updated", (element) => events.changed(element));
+    livewire2.hook("element.removed", (element) => events.removed(element));
+    livewire2.hook("message.sent", (message, component) => {
+      var _a;
+      for (const operation of (_a = deferred.get(component)) != null ? _a : []) {
+        if (operation.deferred && !operation.message) {
+          operation.message = message;
+        }
+      }
+    });
+    const finish = (message, component, outcome) => {
+      const list = deferred.get(component);
+      for (const operation of [...list != null ? list : []]) {
+        if (operation.message === message) {
+          list.delete(operation);
           outcome(operation);
         }
       }
     };
-    const rejectAll = (component, error) => {
-      var _a;
-      for (const operation of (_a = operations.get(component)) != null ? _a : []) {
-        operation.reject(error());
-      }
-      operations.delete(component);
-    };
-    const send = (component, dispatch) => new Promise((resolve, reject) => {
-      var _a;
-      const queue = component.actionQueue;
-      const length = queue.length;
-      dispatch();
-      if (component.actionQueue !== queue || queue.length === length) {
-        resolve(void 0);
-        return;
-      }
-      const list = (_a = operations.get(component)) != null ? _a : [];
-      list.push({ action: queue[queue.length - 1], resolve, reject });
-      operations.set(component, list);
-    });
-    livewire2.hook("componentInitialized", (component) => {
-      track(component);
-      events.componentAdded(component);
-    });
-    livewire2.hook("elementInitialized", (element) => {
-      if (element.el.hasAttribute("data-pharaonic")) {
-        events.added(element.el);
-      }
-    });
-    livewire2.hook("afterElementUpdate", (node) => events.changed(node));
-    livewire2.hook("elementRemoved", (element) => events.removed(element.el));
-    livewire2.hook("responseReceived", (component) => {
-      settle(component, (operation) => operation.resolve(void 0));
+    livewire2.hook("message.processed", (message, component) => {
+      finish(message, component, (operation) => operation.resolve(void 0));
       events.settled(component);
     });
-    livewire2.hook("messageFailed", (component) => {
-      settle(component, (operation) => operation.reject(
-        assistantError("request-failed", `The Livewire request of component "${component.id}" failed.`)
-      ));
+    livewire2.hook("message.failed", (message, component) => {
+      finish(message, component, (operation) => operation.reject(requestFailed(component)));
     });
     document.addEventListener("turbolinks:before-cache", () => events.navigating());
+    document.addEventListener("turbo:before-cache", () => events.navigating());
     document.addEventListener("livewire:load", () => events.ready());
     if (store.initialRenderIsFinished) {
       events.ready();
@@ -118,17 +131,26 @@ var livewire = {
       isAlive(component) {
         return store.componentsById[component.id] === component;
       },
+      // A deferred write is part of the client state until it is sent.
       get(component, path) {
+        var _a;
+        const waiting = (_a = component.deferredActions) == null ? void 0 : _a[path];
+        if (waiting) {
+          return waiting.payload.value;
+        }
         return path.split(".").reduce((carry, segment) => carry === null || carry === void 0 ? void 0 : carry[segment], component.data);
       },
       set(component, path, value, { live }) {
-        if (!live) {
-          return Promise.reject(assistantError("unsupported-operation", "Deferred writes ({ live: false }) need Livewire 2 or newer; Livewire 1 sends every write immediately."));
+        if (live) {
+          return send(component, "$set", [path, value]).then(() => void 0);
         }
-        return send(component, () => component.set(path, value));
+        return new Promise((resolve, reject) => {
+          pendingOf(component).add({ deferred: true, resolve, reject });
+          component.set(path, value, true);
+        });
       },
       call(component, method, args) {
-        return send(component, () => component.call(method, ...args));
+        return send(component, method, args).then((value) => value != null ? value : void 0);
       }
     };
   }
@@ -215,7 +237,7 @@ function createRuntime({ window: win, livewire: livewire2 }) {
     }
     if (livewire2.present(win)) {
       unsupported = true;
-      report("livewire-unsupported", "The Livewire runtime on this page is not supported by this release of Pharaonic Livewire Assistant; it supports Livewire 1.");
+      report("livewire-unsupported", "The Livewire runtime on this page is not supported by this release of Pharaonic Livewire Assistant; it supports Livewire 2.");
       return;
     }
     const retry = () => {

@@ -32,11 +32,7 @@ export function setup(html = '') {
         isAlive: (component) => components.get(component.id) === component,
         get: (component, path) => path.split('.').reduce((carry, key) => (carry == null ? undefined : carry[key]), component.data),
         set(component, path, value, { live }) {
-            if (!live) {
-                return Promise.reject(Object.assign(new Error('deferred'), { code: 'unsupported-operation' }))
-            }
-
-            return new Promise((resolve, reject) => requests.push({ type: 'set', component, path, value, resolve, reject }))
+            return new Promise((resolve, reject) => requests.push({ type: 'set', component, path, value, live, resolve, reject }))
         },
         call(component, method, args) {
             return new Promise((resolve, reject) => requests.push({ type: 'call', component, method, args, resolve, reject }))

@@ -572,10 +572,16 @@ describe('component bridge', () => {
         assert.equal(await promise, undefined)
     })
 
-    it('rejects deferred writes Livewire cannot perform', async () => {
-        const { context } = await mounted({})
+    it('passes deferred writes to Livewire and resolves with their request', async () => {
+        const { lw, context } = await mounted({})
+        const live = context.component.set('name', 'x')
+        const deferred = context.component.set('name', 'y', { live: false })
 
-        await assert.rejects(context.component.set('name', 'x', { live: false }), { code: 'unsupported-operation' })
+        assert.deepEqual(lw.requests.map((request) => request.live), [true, false])
+        lw.requests[1].resolve()
+        lw.requests[0].resolve()
+        assert.equal(await deferred, undefined)
+        assert.equal(await live, undefined)
     })
 
     it('returns action results and preserves rejections', async () => {
