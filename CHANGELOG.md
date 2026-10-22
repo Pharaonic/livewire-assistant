@@ -2,7 +2,7 @@
 
 All notable changes to this project are documented here.
 
-## 1.0.0 - Unreleased
+## 1.0.0 - 2026-10-22
 
 ### Added
 
@@ -23,3 +23,4 @@ All notable changes to this project are documented here.
 - Laravel 7.30+ and 8.75+.
 - PHP 7.4, because every Livewire 1 release requires PHP 7.
 - On Livewire 1, `set(..., { live: false })` rejects with `unsupported-operation`, and `call()` resolves to `undefined`.
+- Livewire 1, Laravel 7, and Laravel 8 no longer receive security fixes. Recent Composer versions refuse to install or update them until their advisories are allowed; the installation guide lists the packages.
