@@ -6,7 +6,7 @@ The `data-pharaonic` name was never registered. Check the spelling, and that you
 
 ### `livewire-unsupported` is reported
 
-The page runs a Livewire major this line does not support. The 3.x line supports Livewire 3 only; use the 1.x line for Livewire 1 and the 2.x line for Livewire 2.
+The page runs a Livewire major this line does not support. The 4.x line supports Livewire 4 only; use the 1.x line for Livewire 1, the 2.x line for Livewire 2, and the 3.x line for Livewire 3.
 
 ### The runtime script returns 404
 
@@ -16,9 +16,9 @@ The web server answers `.js` URLs from `public/` without asking Laravel. Let `/p
 
 Composer blocks releases with security advisories when it installs or updates them, and no Laravel 10 or 11 release is free of them. See the warning in [Installation](#installation).
 
-### Composer refuses Livewire below 3.8.3
+### Composer refuses Livewire below 4.3.4
 
-The 3.x line requires Livewire 3.8.3 or later, the first Livewire 3 release with no known advisory. Update Livewire within its major: `composer update livewire/livewire`.
+The 4.x line requires Livewire 4.3.4 or later, the first Livewire 4 release with no known advisory. Update Livewire within its major: `composer update livewire/livewire`.
 
 ### Typing in an input jumps back to older text
 
@@ -58,7 +58,7 @@ The integration applies server values in a way that fires its own change handler
 
 ### Coming from pharaonic/livewire-select2
 
-`pharaonic/livewire-select2` ships its own Select2 initialization script. On Livewire 3, use this package with the [Select2 integration](#select2) instead; keep jQuery and Select2:
+`pharaonic/livewire-select2` ships its own Select2 initialization script. On Livewire 4, use this package with the [Select2 integration](#select2) instead; keep jQuery and Select2:
 
 | livewire-select2 | Livewire Assistant |
 | --- | --- |

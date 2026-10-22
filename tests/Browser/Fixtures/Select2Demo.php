@@ -52,6 +52,11 @@ final class Select2Demo extends Component
         throw new \RuntimeException('Fixture failure.');
     }
 
+    public function invalid(): void
+    {
+        $this->validate(['country' => 'in:none']);
+    }
+
     public function render()
     {
         $this->renders++;

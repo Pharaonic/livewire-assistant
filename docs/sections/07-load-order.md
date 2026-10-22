@@ -8,7 +8,7 @@ The runtime, Livewire, and your integrations can load in any order.
 
 | Situation | Result |
 | --- | --- |
-| Livewire 3 loads before or after the Assistant | Works, no duplicate hooks |
+| Livewire 4 loads before or after the Assistant | Works, no duplicate hooks |
 | Livewire never loads | `livewire-missing` after the page `load` event |
 | Another Livewire major is on the page | `livewire-unsupported`; nothing mounts |
 
