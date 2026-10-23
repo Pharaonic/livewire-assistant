@@ -27,7 +27,8 @@ export default defineConfig({
         use: { ...devices[{ chromium: 'Desktop Chrome', firefox: 'Desktop Firefox', webkit: 'Desktop Safari' }[name]] },
     })),
     webServer: {
-        command: `${php} -S 127.0.0.1:${port} tests/Browser/server.php`,
+        // Views are compiled before the workers start; see tests/Browser/compile.php.
+        command: `${php} tests/Browser/compile.php && ${php} -S 127.0.0.1:${port} tests/Browser/server.php`,
         url: `http://127.0.0.1:${port}/blank`,
         env: { PHP_CLI_SERVER_WORKERS: '8' },
         reuseExistingServer: !process.env.CI,
