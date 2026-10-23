@@ -2,7 +2,7 @@
 
 All notable changes to this project are documented here.
 
-## 4.0.0 - Unreleased
+## 4.0.0 - 2026-10-23
 
 The first release of the 4.x line, for Livewire 4. The integration API, the component bridge, the attributes, and the error codes are the same as in 3.x.
 
