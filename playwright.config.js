@@ -18,6 +18,8 @@ export default defineConfig({
     retries: 0,
     workers: process.env.CI ? 2 : 4,
     reporter: process.env.CI ? [['list'], ['github']] : 'list',
+    // The first visit of a fixture compiles its views; on a busy CI runner that alone can take over five seconds.
+    expect: { timeout: 15_000 },
     use: {
         baseURL: `http://127.0.0.1:${port}`,
         trace: 'retain-on-failure',
