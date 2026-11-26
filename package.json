@@ -22,7 +22,7 @@
     "eslint": "10.15.0",
     "globals": "17.14.0",
     "happy-dom": "21.0.4",
-    "jquery": "4.0.0",
-    "select2": "4.1.0"
+    "jquery": "4.1.0",
+    "select2": "4.2.0"
   }
 }
